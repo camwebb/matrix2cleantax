@@ -1,0 +1,83 @@
+#!/bin/gawk -f 
+
+## Conversion of matrix (spreadsheet) format of Taxon Concept alignments to
+##   EulerX input format ('cleantax')
+##
+## (c) Cam Webb 2018 <cw@camwebb.info>
+## Licence: CCO / Public Domain
+
+BEGIN{
+  FS="|";
+  ORS="";
+
+  # Check arguments
+  if (ARGC != 2) {
+    print "  Usage: mx2ct <infile>\n" > "/dev/stderr";
+    exit 1
+  }
+  
+  e = 0;
+  while (( getline < ARGV[1]) > 0) {
+    # strip spaces
+    gsub(/\ +/,"",$0);
+    event[++e] = $1;
+    ntum = NF-1;
+    for (i = 1; i < NF; i++) {
+      tc[e, i] = $(i+1);
+    }
+  }
+  events = e;
+
+  # Create taxonomies
+  for (i = 1; i <= events; i++) {
+    print "taxonomy " event[i] " " event[i] "\n";
+    # Use a default higher taxon 'X'
+    print "(X";
+    w = 0;
+    for (j = 1; j <= ntum; j++) {
+      # first time only:
+      if (!width[i, tc[i, j]]) {
+        print " " tc[i, j] ;
+        nlist[i]++;
+        # make a list of taxa;
+        tlist[i, ++w] = event[i] "." tc[i, j];
+      }
+      # how many tums per taxon?;
+      width[i, tc[i, j]]++;
+      # where is the taxon?
+      pres[event[i] "." tc[i, j], j] = 1; 
+    }
+    print ")\n\n";
+  }
+
+  # Create relationships
+  print "articulation a1 matrix2cleantax\n";
+  for (i = 1; i <= events; i++) {
+    for (j = i+1; j <= events; j++) {
+      # 'ends' of the alignment are equal'
+      print "[" event[i] ".X equals " event[j] ".X]\n";
+      for (k = 1; k <= nlist[i]; k++) {
+        for (l = 1; l <= nlist[j]; l++) {
+
+          # now the real work:
+          type10 = type11 = type01 = ""; 
+          for (x = 1; x <= ntum; x++) {
+            if (pres[tlist[i, k], x] && !pres[tlist[j, l], x]) type10 = 1;
+            if (pres[tlist[i, k], x] && pres[tlist[j, l], x]) type11 = 1;
+            if (!pres[tlist[i, k], x] && pres[tlist[j, l], x]) type01 = 1;
+          }
+          if (!type10 && type11 && !type01) print "[" tlist[i, k] \
+             " equals " tlist[j, l] "]\n";
+          if (type10 && type11 && !type01) print "[" tlist[i, k]        \
+             " includes " tlist[j, l] "]\n";
+          if (!type10 && type11 && type01) print "[" tlist[i, k]        \
+             " is_included_in " tlist[j, l] "]\n";
+          if (type10 && type11 && type01) print "[" tlist[i, k]         \
+             " overlaps " tlist[j, l] "]\n";
+          if (!type10 && !type11 && !type01) print "[" tlist[i, k] \
+             " disjoint " tlist[j, l] "]\n";
+        }
+      }
+    }
+  }
+}

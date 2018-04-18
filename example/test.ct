@@ -1,0 +1,20 @@
+taxonomy CS3 CS3
+(X a b)
+
+taxonomy CS2 CS2
+(X a b)
+
+taxonomy CS1 CS1
+(X a)
+
+articulation a1 matrix2cleantax
+[CS3.X equals CS2.X]
+[CS3.a is_included_in CS2.a]
+[CS3.b overlaps CS2.a]
+[CS3.b includes CS2.b]
+[CS3.X equals CS1.X]
+[CS3.a is_included_in CS1.a]
+[CS3.b is_included_in CS1.a]
+[CS2.X equals CS1.X]
+[CS2.a is_included_in CS1.a]
+[CS2.b is_included_in CS1.a]

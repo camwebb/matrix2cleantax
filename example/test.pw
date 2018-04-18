@@ -1,0 +1,2 @@
+Possible world 0:
+{CS3.a"<"CS2.a, CS3.a"<"CS2.X, CS3.b"<"CS2.X, CS3.X"="CS1.X, CS2.X"="CS1.X, CS3.X"="CS2.X, CS3.X"="CS1.a, CS2.X"="CS1.a, CS3.a"<"CS1.X, CS2.a"<"CS1.X, CS3.b"<"CS1.X, CS2.b"<"CS1.X, CS3.X">"CS2.a, CS3.X">"CS2.b, CS3.a"<"CS1.a, CS2.a"<"CS1.a, CS3.b"<"CS1.a, CS2.b"<"CS1.a, CS3.b">"CS2.b, CS3.b"><"CS2.a, CS3.a"!"CS2.b}
